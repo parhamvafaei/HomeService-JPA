@@ -46,8 +46,15 @@ public class AdminServiceImpl extends BaseServiceImpl<Admin, AdminRepository> im
             } else if (!(Util.isContain(service))) {
                 throw new NotFoundServiceException("this service doesnt exist !");
             }else{
-                subServiceService.saveOrUpdate(subService);
-                return subService.getId();
+                try {
+                    repository.getEntityManager().getTransaction().begin();
+                    subServiceService.saveOrUpdate(subService);
+                    repository.getEntityManager().getTransaction().commit();
+                }catch (Exception e ){
+                    repository.getEntityManager().getTransaction().rollback();
+throw new RuntimeException();
+                }
+                    return subService.getId();
             }
         }
         return null;
@@ -66,7 +73,15 @@ public class AdminServiceImpl extends BaseServiceImpl<Admin, AdminRepository> im
             List<Expert> experts = subService.getExperts();
             experts.add(expert);
             subService.setExperts(experts);
-        subServiceService.saveOrUpdate(subService);
+            try {
+                repository.getEntityManager().getTransaction().begin();
+                subServiceService.saveOrUpdate(subService);
+                repository.getEntityManager().getTransaction().commit();
+            }catch (Exception e ){
+                repository.getEntityManager().getTransaction().rollback();
+                throw new RuntimeException();
+            }
+
     }else
         throw new ExpertAddException();
     }
@@ -78,7 +93,15 @@ public class AdminServiceImpl extends BaseServiceImpl<Admin, AdminRepository> im
             List<Expert> experts = subService.getExperts();
             experts.remove(expert);
             subService.setExperts(experts);
-            subServiceService.saveOrUpdate(subService);
+            try {
+                repository.getEntityManager().getTransaction().begin();
+                subServiceService.saveOrUpdate(subService);
+                repository.getEntityManager().getTransaction().commit();
+            }catch (Exception e ){
+                repository.getEntityManager().getTransaction().rollback();
+                throw new RuntimeException();
+            }
+
 
             }else
         throw new NotFoundServiceException("this sub service isn't exist for you");
@@ -88,11 +111,20 @@ public class AdminServiceImpl extends BaseServiceImpl<Admin, AdminRepository> im
     @Override
     public Long confirmExpert(Expert expert) {
 
-        return null;
+        expert.setExpertStatus(ExpertStatus.CONFIRMED);
+        try {
+            repository.getEntityManager().getTransaction().begin();
+            expertService.saveOrUpdate(expert);
+            repository.getEntityManager().getTransaction().commit();
+        }catch (Exception e ){
+            repository.getEntityManager().getTransaction().rollback();
+            throw new RuntimeException();
+        }
+        return expert.getId();
     }
 
     @Override
     public Boolean checkSubServiceByName(SubService subService) {
-        return null;
+        return subServiceService.checkSubServiceByName(subService);
     }
 }
