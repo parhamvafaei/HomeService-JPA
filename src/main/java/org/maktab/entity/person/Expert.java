@@ -29,7 +29,7 @@ public class Expert extends Person {
     @Enumerated
     private ExpertStatus expertStatus;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "expert_subservice",
             joinColumns = @JoinColumn(name = "expert_id"),
             inverseJoinColumns = @JoinColumn(name = "subservice_id"))
@@ -40,10 +40,7 @@ public class Expert extends Person {
     @ToString.Exclude
     private List<Offer> offers;
 
-//    @OneToMany
-//    @ToString.Exclude
-//    private List<Order> orders;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private Credit credit;
 }

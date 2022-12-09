@@ -20,8 +20,8 @@ public class Order extends BaseEntity {
     private Double price;
     private String description;
     private LocalDateTime time;
+    private Boolean isDone;
 
-//is done
     @ManyToOne
     private Address address;
 
@@ -31,13 +31,13 @@ public class Order extends BaseEntity {
     @ManyToOne
     private Client client;
 
-    @OneToMany
+    @OneToMany(mappedBy = "order" , cascade = CascadeType.ALL)
+    @ToString.Exclude
     private List<Offer> offer;
 
 
-
     @Enumerated
-    private OrderStatus orderStatus=OrderStatus.WAITING_FOR_EXPERT;
+    private OrderStatus orderStatus = OrderStatus.WAITING_FOR_EXPERT;
 
 
 }
