@@ -27,10 +27,7 @@ public class SubService extends BaseEntity {
    @ToString.Exclude
    private List<Expert> experts;
 
-//(mappedBy = "subservice")
-//   @OneToMany
-//   @ToString.Exclude
-//   private List<Order> orders;
+
 
 
 }
