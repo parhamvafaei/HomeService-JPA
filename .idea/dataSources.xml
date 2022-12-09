@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="maktab-project" uuid="7ad07960-9649-45a2-84bf-6da2038adae4">
+    <data-source source="LOCAL" name="finalproject" uuid="1994e33b-2f3e-47fd-b81a-68560678226c">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
