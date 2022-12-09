@@ -6,6 +6,7 @@ import lombok.*;
 import org.maktab.base.entity.BaseEntity;
 import org.maktab.entity.person.Expert;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -25,7 +26,7 @@ public class SubService extends BaseEntity {
 
    @ManyToMany(cascade = CascadeType.ALL)
    @ToString.Exclude
-   private List<Expert> experts;
+   private List<Expert> experts=new ArrayList<>();
 
 
 

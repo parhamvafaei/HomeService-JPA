@@ -5,6 +5,8 @@ import org.maktab.entity.Service;
 import org.maktab.entity.SubService;
 import org.maktab.entity.person.Admin;
 import org.maktab.entity.person.Expert;
+import org.maktab.entity.person.ExpertStatus;
+import org.maktab.exceptionhandler.ExpertAddException;
 import org.maktab.exceptionhandler.NotFoundServiceException;
 import org.maktab.exceptionhandler.RepetitiveServiceException;
 import org.maktab.repository.AdminRepository;
@@ -16,7 +18,7 @@ import org.maktab.service.SubServiceService;
 import org.maktab.util.JpaConnection;
 import org.maktab.util.Util;
 
-import java.util.Arrays;
+
 import java.util.List;
 
 public class AdminServiceImpl extends BaseServiceImpl<Admin, AdminRepository> implements AdminService {
@@ -37,7 +39,7 @@ public class AdminServiceImpl extends BaseServiceImpl<Admin, AdminRepository> im
 
     @Override
     public Long addSubService(SubService subService, String service) {
-        while (subServiceService.isExistsById(subService.getId())){
+        if (subServiceService.isExistsById(subService.getId())){
             if (subServiceService.checkSubServiceByName(subService)) {
                 throw new RepetitiveServiceException("already exist !");
 
@@ -58,28 +60,39 @@ public class AdminServiceImpl extends BaseServiceImpl<Admin, AdminRepository> im
     }
 
     @Override
-    public Long addExpertToSubService(Expert expert, SubService subService) {
-        if (expert.getStatus() == ExpertStatus.NEW || expert.getStatus() == ExpertStatus.AWAITING_CONFIRMATION) {
-            throw new NotAccessExpertException("expert has no access");
-        }
-        for (ExpertSubService expertSubService : expert.getExpertSubServices()) {
-            if (expertSubService.getSubService().getName().equalsIgnoreCase(subService.getName())) {
-                throw new DuplicateSubServiceExpertException("sub service exist for expert");
-            }
-        }
-        checkSubServiceNameExist(!subServiceService.isNameExist(subService.getName()), "this sub service isn't exist");
-        ExpertSubService expertSubService = new ExpertSubService(expert, subService, 0F);
-        expertSubServiceService.saveOrUpdate(expertSubService);
-    }
+    public void addExpertToSubService(Expert expert, SubService subService) {
+
+        if (expert.getStatus()== ExpertStatus.CONFIRMED && subServiceService.checkSubServiceByName(subService)) {
+            List<Expert> experts = subService.getExperts();
+            experts.add(expert);
+            subService.setExperts(experts);
+        subServiceService.saveOrUpdate(subService);
+    }else
+        throw new ExpertAddException();
     }
 
     @Override
     public void deleteExpertOfSubService(Expert expert, SubService subService) {
 
+        if (subService.getExperts().contains(expert)) {
+            List<Expert> experts = subService.getExperts();
+            experts.remove(expert);
+            subService.setExperts(experts);
+            subServiceService.saveOrUpdate(subService);
+
+            }else
+        throw new NotFoundServiceException("this sub service isn't exist for you");
     }
+
 
     @Override
     public Long confirmExpert(Expert expert) {
+
+        return null;
+    }
+
+    @Override
+    public Boolean checkSubServiceByName(SubService subService) {
         return null;
     }
 }
