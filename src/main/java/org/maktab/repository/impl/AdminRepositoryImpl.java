@@ -15,4 +15,6 @@ public class AdminRepositoryImpl extends BaseRepositoryImpl<Admin> implements Ad
     public Class<Admin> getEntityClass() {
         return Admin.class;
     }
+
+
 }

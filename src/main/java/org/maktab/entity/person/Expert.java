@@ -43,4 +43,8 @@ public class Expert extends Person {
 
     @OneToOne(cascade = CascadeType.ALL)
     private Credit credit;
+
+    public ExpertStatus getStatus() {
+        return this.expertStatus;
+    }
 }
