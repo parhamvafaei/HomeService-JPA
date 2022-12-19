@@ -8,15 +8,15 @@ import org.maktab.entity.person.Expert;
 import org.maktab.entity.person.ExpertStatus;
 import org.maktab.exceptionhandler.ExpertAddException;
 import org.maktab.exceptionhandler.NotFoundServiceException;
-import org.maktab.exceptionhandler.RepetitiveServiceException;
 import org.maktab.repository.AdminRepository;
 import org.maktab.repository.impl.ExpertRepositoryImpl;
+import org.maktab.repository.impl.ServiceRepositoryImpl;
 import org.maktab.repository.impl.SubServiceRepositoryImpl;
 import org.maktab.service.AdminService;
 import org.maktab.service.ExpertService;
+import org.maktab.service.ServiceService;
 import org.maktab.service.SubServiceService;
 import org.maktab.util.JpaConnection;
-import org.maktab.util.Util;
 
 
 import java.util.List;
@@ -26,8 +26,12 @@ public class AdminServiceImpl extends BaseServiceImpl<Admin, AdminRepository> im
 
     private final SubServiceService subServiceService = new SubServiceServiceImpl
             (new SubServiceRepositoryImpl(JpaConnection.getEntityManagerFactory().createEntityManager()));
+
+    private final ServiceService serviceService = new ServiceServiceImpl
+            (new ServiceRepositoryImpl(JpaConnection.getEntityManagerFactory().createEntityManager()));
     private final ExpertService expertService = new ExpertServiceImpl
             (new ExpertRepositoryImpl(JpaConnection.getEntityManagerFactory().createEntityManager()));
+
     public AdminServiceImpl(AdminRepository repository) {
         super(repository);
     }
@@ -38,38 +42,59 @@ public class AdminServiceImpl extends BaseServiceImpl<Admin, AdminRepository> im
     }
 
     @Override
-    public Long addSubService(SubService subService, String service) {
-        if (subServiceService.isExistsById(subService.getId())){
-            if (subServiceService.checkSubServiceByName(subService)) {
-                throw new RepetitiveServiceException("already exist !");
+    public void changePassword(Admin admin, String password) {
 
-            } else if (!(Util.isContain(service))) {
-                throw new NotFoundServiceException("this service doesnt exist !");
-            }else{
-                try {
-                    repository.getEntityManager().getTransaction().begin();
-                    subServiceService.saveOrUpdate(subService);
-                    repository.getEntityManager().getTransaction().commit();
-                }catch (Exception e ){
-                    repository.getEntityManager().getTransaction().rollback();
-throw new RuntimeException();
-                }
-                    return subService.getId();
-            }
+        try {
+            admin.setPassword(password);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage());
         }
-        return null;
+        try {
+            repository.getEntityManager().getTransaction().begin();
+            saveOrUpdate(admin);
+            repository.getEntityManager().getTransaction().commit();
+        } catch (Exception e) {
+            repository.getEntityManager().getTransaction().rollback();
+            throw new RuntimeException();
+        }
+    }
+
+    @Override
+    public void editSubService(SubService subService, Double price, String description) {
+        if (!(subServiceService.isExistsById(subService.getId())))
+            throw new NotFoundServiceException("this SubService doesnt exist !");
+        boolean condition = price == null && description == null;
+        while (!(condition)) {
+            if (price == null)
+                subService.setDescription(description);
+            else if (description == null) {
+                subService.setPrice(price);
+            } else {
+                subService.setDescription(description);
+                subService.setPrice(price);
+            }
+            condition = true;
+        }
+        try {
+            repository.getEntityManager().getTransaction().begin();
+            subServiceService.saveOrUpdate(subService);
+            repository.getEntityManager().getTransaction().commit();
+        } catch (Exception e) {
+            repository.getEntityManager().getTransaction().rollback();
+            throw new RuntimeException();
+        }
     }
 
 
     @Override
     public List<Service> loadServices() {
-        return List.of(Service.getServices());
+        return serviceService.findAll();
     }
 
     @Override
     public void addExpertToSubService(Expert expert, SubService subService) {
 
-        if (expert.getStatus()== ExpertStatus.CONFIRMED && subServiceService.checkSubServiceByName(subService)) {
+        if (expert.getStatus() == ExpertStatus.CONFIRMED && subServiceService.checkSubServiceByName(subService)) {
             List<Expert> experts = subService.getExperts();
             experts.add(expert);
             subService.setExperts(experts);
@@ -77,13 +102,13 @@ throw new RuntimeException();
                 repository.getEntityManager().getTransaction().begin();
                 subServiceService.saveOrUpdate(subService);
                 repository.getEntityManager().getTransaction().commit();
-            }catch (Exception e ){
+            } catch (Exception e) {
                 repository.getEntityManager().getTransaction().rollback();
                 throw new RuntimeException();
             }
 
-    }else
-        throw new ExpertAddException();
+        } else
+            throw new ExpertAddException();
     }
 
     @Override
@@ -97,14 +122,14 @@ throw new RuntimeException();
                 repository.getEntityManager().getTransaction().begin();
                 subServiceService.saveOrUpdate(subService);
                 repository.getEntityManager().getTransaction().commit();
-            }catch (Exception e ){
+            } catch (Exception e) {
                 repository.getEntityManager().getTransaction().rollback();
                 throw new RuntimeException();
             }
 
 
-            }else
-        throw new NotFoundServiceException("this sub service isn't exist for you");
+        } else
+            throw new RuntimeException("delete expert of subService failed!");
     }
 
 
@@ -116,7 +141,7 @@ throw new RuntimeException();
             repository.getEntityManager().getTransaction().begin();
             expertService.saveOrUpdate(expert);
             repository.getEntityManager().getTransaction().commit();
-        }catch (Exception e ){
+        } catch (Exception e) {
             repository.getEntityManager().getTransaction().rollback();
             throw new RuntimeException();
         }

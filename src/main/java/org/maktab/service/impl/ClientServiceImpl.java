@@ -8,9 +8,11 @@ import org.maktab.entity.SubService;
 import org.maktab.entity.person.Client;
 import org.maktab.repository.ClientRepository;
 import org.maktab.repository.impl.OrderRepositoryImpl;
+import org.maktab.repository.impl.ServiceRepositoryImpl;
 import org.maktab.repository.impl.SubServiceRepositoryImpl;
 import org.maktab.service.ClientService;
 import org.maktab.service.OrderService;
+import org.maktab.service.ServiceService;
 import org.maktab.service.SubServiceService;
 import org.maktab.util.JpaConnection;
 
@@ -21,6 +23,9 @@ public class ClientServiceImpl extends BaseServiceImpl<Client, ClientRepository>
 
     private final SubServiceService subServiceService = new SubServiceServiceImpl
             (new SubServiceRepositoryImpl(JpaConnection.getEntityManagerFactory().createEntityManager()));
+
+    private final ServiceService serviceService = new ServiceServiceImpl
+            (new ServiceRepositoryImpl(JpaConnection.getEntityManagerFactory().createEntityManager()));
     private final OrderService orderService = new OrderServiceImpl
             (new OrderRepositoryImpl(JpaConnection.getEntityManagerFactory().createEntityManager()));
 
@@ -30,13 +35,14 @@ public class ClientServiceImpl extends BaseServiceImpl<Client, ClientRepository>
 
 
     @Override
-    public void addOrder(Order order) {
+    public void addOrder(Order order, SubService subService) {
         order.setOrderStatus(OrderStatus.WAITING_FOR_EXPERT);
+        order.setSubService(subService);
         try {
             repository.getEntityManager().getTransaction().begin();
             orderService.saveOrUpdate(order);
             repository.getEntityManager().getTransaction().commit();
-        }catch (Exception e ){
+        } catch (Exception e) {
             repository.getEntityManager().getTransaction().rollback();
             throw new RuntimeException();
         }
@@ -55,7 +61,7 @@ public class ClientServiceImpl extends BaseServiceImpl<Client, ClientRepository>
             repository.getEntityManager().getTransaction().begin();
             saveOrUpdate(client);
             repository.getEntityManager().getTransaction().commit();
-        }catch (Exception e ){
+        } catch (Exception e) {
             repository.getEntityManager().getTransaction().rollback();
             throw new RuntimeException();
         }
@@ -64,7 +70,7 @@ public class ClientServiceImpl extends BaseServiceImpl<Client, ClientRepository>
 
     @Override
     public List<Service> loadServices() {
-        return List.of(Service.getServices());
+        return serviceService.findAll();
     }
 
     @Override

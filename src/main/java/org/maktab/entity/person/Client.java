@@ -8,7 +8,7 @@ import jakarta.persistence.OneToOne;
 import lombok.*;
 import org.maktab.entity.Credit;
 import org.maktab.entity.Order;
-import org.maktab.entity.SubService;
+
 
 import java.util.List;
 
@@ -24,5 +24,6 @@ public class Client extends Person {
 private Credit credit;
 
     @OneToMany(mappedBy = "client" ,cascade = CascadeType.ALL)
+    @ToString.Exclude
     private List<Order> orders;
 }
