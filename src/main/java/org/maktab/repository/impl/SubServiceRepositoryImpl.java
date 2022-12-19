@@ -19,9 +19,6 @@ public class SubServiceRepositoryImpl extends BaseRepositoryImpl<SubService> imp
     public Boolean checkSubServiceByName(SubService subService) {
         Object result = em.createQuery("select from " + getEntityClass().getSimpleName() + " s where s.getName()= :name")
                 .setParameter("name", subService.getName()).getSingleResult();
-        if (result==null) {
-            return false;
-        }
-        return true;
+        return result != null;
     }
 }

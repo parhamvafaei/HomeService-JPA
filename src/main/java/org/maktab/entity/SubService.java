@@ -21,7 +21,7 @@ public class SubService extends BaseEntity {
    private Double price;
    private String description;
 
-   @Enumerated
+   @ManyToOne
    private Service service;
 
    @ManyToMany(cascade = CascadeType.ALL)
