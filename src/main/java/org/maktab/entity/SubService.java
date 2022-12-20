@@ -24,7 +24,7 @@ public class SubService extends BaseEntity {
    @ManyToOne
    private Service service;
 
-   @ManyToMany(cascade = CascadeType.ALL)
+   @ManyToMany(cascade = CascadeType.ALL,mappedBy = "subServices")
    @ToString.Exclude
    private List<Expert> experts=new ArrayList<>();
 
