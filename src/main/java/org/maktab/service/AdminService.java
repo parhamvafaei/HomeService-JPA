@@ -16,21 +16,7 @@ import java.util.List;
 
 public interface AdminService extends BaseService<Admin> {
 
-    List<SubService> LoadSubServices();
-
-
-    List<Service> loadServices();
-
-    void addExpertToSubService(Expert expert, SubService subService);
-
-    void deleteExpertOfSubService(Expert expert, SubService subService);
-
-    Long confirmExpert(Expert expert);
-
-    Boolean checkSubServiceByName(SubService subService);
-
     void changePassword(Admin admin, String password);
 
-    void editSubService(SubService subService, Double price, String description);
 
 }

@@ -10,11 +10,6 @@ import java.util.List;
 
 public interface ClientService extends BaseService<Client> {
 
-    void addOrder(Order order, SubService subService);
-
     void changePassword(Client client, String password);
 
-    List<Service> loadServices();
-
-    List<SubService> showAllSubServices();
 }
