@@ -2,6 +2,7 @@ package org.maktab.service.impl;
 
 import org.maktab.base.service.impl.BaseServiceImpl;
 import org.maktab.entity.person.Expert;
+import org.maktab.entity.person.ExpertStatus;
 import org.maktab.repository.ExpertRepository;
 import org.maktab.service.ExpertService;
 
@@ -33,6 +34,21 @@ public class ExpertServiceImpl extends BaseServiceImpl<Expert, ExpertRepository>
             throw new NullPointerException();
 
 
+    }
+
+    @Override
+    public Long confirmExpert(Expert expert) {
+
+        expert.setExpertStatus(ExpertStatus.CONFIRMED);
+        try {
+            repository.getEntityManager().getTransaction().begin();
+            saveOrUpdate(expert);
+            repository.getEntityManager().getTransaction().commit();
+        } catch (Exception e) {
+            repository.getEntityManager().getTransaction().rollback();
+            throw new RuntimeException();
+        }
+        return expert.getId();
     }
 
     @Override

@@ -7,6 +7,8 @@ import org.maktab.repository.ServiceRepository;
 
 import org.maktab.service.ServiceService;
 
+import java.util.List;
+
 
 public class ServiceServiceImpl extends BaseServiceImpl<Service, ServiceRepository> implements ServiceService {
 
@@ -15,5 +17,8 @@ public class ServiceServiceImpl extends BaseServiceImpl<Service, ServiceReposito
         super(repository);
     }
 
-
+    @Override
+    public List<Service> loadServices() {
+        return findAll();
+    }
 }

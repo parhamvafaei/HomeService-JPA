@@ -11,7 +11,10 @@ public interface ExpertService extends BaseService<Expert> {
 
     void changePassword(Expert expert, String password);
 
-    void changeEmail(Long id , String email);
+    void changeEmail(Long id, String email);
 
-    void setProfileImage(File image , Long id);
+    void setProfileImage(File image, Long id);
+
+    Long confirmExpert(Expert expert);
+
 }

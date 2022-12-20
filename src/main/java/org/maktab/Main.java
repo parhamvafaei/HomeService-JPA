@@ -3,6 +3,7 @@ package org.maktab;
 
 import jakarta.persistence.EntityManager;
 import org.maktab.entity.Address;
+import org.maktab.entity.person.Admin;
 import org.maktab.exceptionhandler.RepetitiveServiceException;
 import org.maktab.util.JpaConnection;
 
@@ -15,6 +16,8 @@ public class Main {
         entityManager.getTransaction().begin();
         entityManager.persist(new Address());
         entityManager.getTransaction().commit();
+        Admin admin=new Admin();
+
 
 //        throw new RepetitiveServiceException();
 //        Service[] services = Service.getServices();
