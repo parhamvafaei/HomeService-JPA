@@ -4,6 +4,7 @@ package org.maktab;
 import jakarta.persistence.EntityManager;
 import org.maktab.entity.Address;
 import org.maktab.entity.person.Admin;
+import org.maktab.entity.person.Expert;
 import org.maktab.exceptionhandler.RepetitiveServiceException;
 import org.maktab.util.JpaConnection;
 
@@ -13,12 +14,15 @@ import java.time.Duration;
 public class Main {
     public static void main(String[] args) {
         EntityManager entityManager = JpaConnection.getEntityManagerFactory().createEntityManager();
+        Expert expert = new Expert();
+        expert.setRating(42F);
+        expert.setPassword("Kuhj986i");
         entityManager.getTransaction().begin();
-        entityManager.persist(new Address());
+        entityManager.persist(expert);
         entityManager.getTransaction().commit();
-        Admin admin=new Admin();
 
 
+//        Admin admin=new Admin();
 //        throw new RepetitiveServiceException();
 //        Service[] services = Service.getServices();
 //        for (int i = 0; i < services.length; i++) {

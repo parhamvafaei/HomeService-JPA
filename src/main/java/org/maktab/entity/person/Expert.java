@@ -31,7 +31,7 @@ public class Expert extends Person {
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "expert_subservice",
             joinColumns = @JoinColumn(name = "expert_id"),
-            inverseJoinColumns = @JoinColumn(name = "subservice_id"))
+            inverseJoinColumns = @JoinColumn(name = "subService_id"))
     @ToString.Exclude
     private List<SubService> subServices;
 
